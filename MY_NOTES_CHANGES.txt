@@ -1,0 +1,27 @@
+CI/CD Pipeline Changes
+
+1. Docker Image Naming – Lowercase Normalization
+        Normalized the dynamically generated Docker image/repository name to lowercase.
+        Used ${GITHUB_REPOSITORY,,} to automatically convert the GitHub repository name to lowercase.
+        This avoids Docker/GHCR image naming and parsing issues without hardcoding the repository name.
+
+2. GHCR Authentication – Automatic GITHUB_TOKEN
+          Removed the need for a manually created Personal Access Token/custom TOKEN.
+          Used GitHub Actions' automatically generated GITHUB_TOKEN for GHCR authentication.
+          This simplifies authentication and avoids token scope/management issues.
+
+3. GitHub Actions Permissions
+      Added workflow-level permissions:
+      permissions:
+        contents: write
+        packages: write
+      packages: write allows the Docker stage to push images to GHCR.
+      contents: write allows the Kubernetes stage to update and push deployment.yaml back to the GitHub repository.
+
+4. Automated Git Commit & Push to Main
+        Automatically updated kubernetes/deployment.yaml with the newly generated Docker image tag.
+        Committed the updated Kubernetes file from the GitHub Actions runner.
+        Used:
+        git push origin HEAD:main
+        to push the current workflow commit to the main branch.
+
